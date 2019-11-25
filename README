@@ -1,0 +1,113 @@
+NSO SYSLOG RELAY
+================
+
+This example shows how to configure NSO and a syslog daemon to relay
+messages over the network. This configuration can be used to send the
+various NSO logs over the network to another syslog server or a third
+party product which consumes the syslog messages.
+
+
+Dependencies
+------------
+The example need the following software
+
+    netcat
+    rsyslog OR syslogd from inet-utils
+
+By default rsyslog is used Debian, Ubuntu, and RHEL.
+
+
+Configuration
+-------------
+This example includes configuration for NSO and syslog to relay
+message.
+
+* NSO is configured to use the local syslog daemon with facility
+  "local0".
+
+* The rsyslog configuration included listens on 127.0.0.1:20514 for
+  respective protocol.
+
+
+The configuration files are as follows:
+
+    ncs.conf
+    rsyslog.udp.conf
+    rsyslog.tcp.conf
+    rsyslog.relp.conf
+
+The configuration for inet-utils syslogd is similar to rsyslog, and
+should the UDP and TCP configurations should be possible to use as is.
+
+
+Run the example
+---------------
+The following example will use TCP for transport. If another transport
+is wanted, replace the transport everywhere applicable in commands
+below. Note that the RELP protocol needs a configured rsyslog on the
+other end to work.
+
+Setup the example by executing
+
+    $ make build
+
+This will setup an ncs directory with the included ncs.conf.
+
+Configure e.g. rsyslog by copying one of the syslog.*.conf files in
+/etc/rsyslog.d and then reload the configuration
+
+    $ sudo cp syslog.tcp.conf /etc/rsyslog.d
+    $ sudo systemctl restart rsyslog.service
+
+Try that the syslog configuration works, run the syslog listener on the
+preconfigured port (20514) in one terminal
+
+    $ make syslog-tcp-listener
+
+In another terminal, log something to our syslog facility
+
+    logger --priority local0.info "tis but a scratch"
+
+In the terminal with the syslog listener this message should appear
+
+    <134>Nov 25 11:04:34 prometheus avtobiff: tis but a scratch
+
+Next start NSO, the syslog listener terminal should fill up wih messages
+
+    $ make start
+
+Trigger an audit log request through e.g. CLI or RESTCONF
+
+    $ make cli
+    $ curl -isu admin:admin http://localhost:8080/restconf
+
+Both commands above should yield audit logs to the syslog listener.
+
+
+Considerations
+--------------
+Remember that firewalls might need to allow connections in order for this
+example to work.
+
+Third party products may need to be configured separately to consume
+syslog messages. This is outside the scope of this example.
+
+
+This concludes the example on how to setup NSO together with a syslog
+daemon to relay syslog messages over the network.
+
+
+License
+-------
+This example is free software licensed under the conditions in the
+Apache License Version 2.0.
+
+     Copyright © 2019 Per Andersson
+
+For full licensing terms see the LICENSE file.
+
+
+Contact and improvements
+------------------------
+This example is written by Per Andersson <perander@cisco.com>. Please
+feel free e-mail or open a pull request for improvements.
