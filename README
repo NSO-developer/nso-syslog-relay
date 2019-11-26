@@ -23,7 +23,7 @@ This example includes configuration for NSO and syslog to relay
 messages.
 
 * NSO is configured to use the local syslog daemon with facility
-  "local0".
+  "local0". The NCS and audit logs are configured to log to syslog.
 
 * The rsyslog configuration files included listens on 127.0.0.1:20514
   for respective protocol.
