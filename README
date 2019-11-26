@@ -14,19 +14,19 @@ The example need the following software
     netcat
     rsyslog OR syslogd from inet-utils
 
-By default rsyslog is used Debian, Ubuntu, and RHEL.
+By default rsyslog is used by Debian, Ubuntu, and RHEL.
 
 
 Configuration
 -------------
 This example includes configuration for NSO and syslog to relay
-message.
+messages.
 
 * NSO is configured to use the local syslog daemon with facility
   "local0".
 
-* The rsyslog configuration included listens on 127.0.0.1:20514 for
-  respective protocol.
+* The rsyslog configuration files included listens on 127.0.0.1:20514
+  for respective protocol.
 
 
 The configuration files are as follows:
@@ -36,8 +36,8 @@ The configuration files are as follows:
     rsyslog.tcp.conf
     rsyslog.relp.conf
 
-The configuration for inet-utils syslogd is similar to rsyslog, and
-should the UDP and TCP configurations should be possible to use as is.
+The configuration for inet-utils' syslogd is similar to rsyslog, and
+both the UDP and TCP configurations should be possible to use as is.
 
 
 Run the example
@@ -59,8 +59,8 @@ Configure e.g. rsyslog by copying one of the syslog.*.conf files in
     $ sudo cp syslog.tcp.conf /etc/rsyslog.d
     $ sudo systemctl restart rsyslog.service
 
-Try that the syslog configuration works, run the syslog listener on the
-preconfigured port (20514) in one terminal
+Verify that the syslog configuration works, run the syslog listener on
+the preconfigured port (20514) in one terminal
 
     $ make syslog-tcp-listener
 
@@ -68,11 +68,12 @@ In another terminal, log something to our syslog facility
 
     logger --priority local0.info "tis but a scratch"
 
-In the terminal with the syslog listener this message should appear
+In the terminal with the syslog listener a similar message should appear
 
     <134>Nov 25 11:04:34 prometheus avtobiff: tis but a scratch
 
-Next start NSO, the syslog listener terminal should fill up wih messages
+Next start NSO, the syslog listener terminal should fill up with
+messages
 
     $ make start
 
@@ -81,7 +82,8 @@ Trigger an audit log request through e.g. CLI or RESTCONF
     $ make cli
     $ curl -isu admin:admin http://localhost:8080/restconf
 
-Both commands above should yield audit logs to the syslog listener.
+Both commands above should yield audit log messages being sent to the
+syslog listener.
 
 
 Considerations
